@@ -126,14 +126,35 @@ async function iniciarSistema() {
     if (loginScreen) loginScreen.style.display = "none";
     if (appContainer) appContainer.style.display = "flex";
 
-    const nomeEl = document.getElementById("userName");
-    const emailEl = document.getElementById("userEmail");
-    const inicialEl = document.getElementById("userInitial");
+    
+const nomeExibicao =
+    usuarioLogado.perfil === "aluno"
+        ? "Mariana Oliveira"
+        : usuarioLogado.nome;
+
+const emailExibicao =
+    usuarioLogado.perfil === "aluno"
+        ? "mariana.oliveira@exemplo.com"
+        : usuarioLogado.email;
+
+
+const nomeEl = document.getElementById("userName");
+const emailEl = document.getElementById("userEmail");
+const inicialEl = document.getElementById("userInitial");
+
+if (nomeEl) nomeEl.textContent = nomeExibicao;
+if (emailEl) emailEl.textContent = emailExibicao;
+
+if (inicialEl) {
+    inicialEl.textContent = nomeExibicao
+        .split(" ")
+        .map(parte => parte[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+}
     const badgeEl = document.getElementById("userRoleBadge");
 
-    if (nomeEl) nomeEl.textContent = usuarioLogado.nome;
-    if (emailEl) emailEl.textContent = usuarioLogado.email;
-    if (inicialEl) inicialEl.textContent = usuarioLogado.nome.substring(0, 2).toUpperCase();
     if (badgeEl) badgeEl.textContent = usuarioLogado.perfil === 'instituicao' ? 'Gestão Acadêmica' : 'Portal do Aluno';
 
     document.querySelectorAll(".menu-instituicao").forEach(el => {
@@ -183,7 +204,11 @@ function obterTurma(id) {
 }
 
 function obterNomeDisciplina(id) {
-    const disc = dados.disciplinas.find(d => d.id === Number(d) || d.codigo === id);
+    const disc = dados.disciplinas.find(d =>
+        String(d.id) === String(id) ||
+        String(d.codigo) === String(id)
+    );
+
     return disc?.nome || "Disciplina indisponível";
 }
 
