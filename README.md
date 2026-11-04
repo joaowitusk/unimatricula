@@ -138,6 +138,12 @@ E-mail: aluno@unimatricula.br
 
 Senha: 123456
 
+Perfil do professor:
+
+professor@unimatricula.br
+
+123456
+
 Funcionalidades Principais (CRUD & Regras)
 Visão Institucional: O gestor pode cadastrar disciplinas, ofertar turmas (definindo professor, vagas, dia e turno codificado) e gerenciar o fluxo acadêmico. Possui travas de integridade para impedir a exclusão de disciplinas com turmas ativas.
 
