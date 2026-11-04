@@ -29,9 +29,7 @@ const TURNOS = {
     3: "Noite"
 };
 
-// --------------------------------------------------
 // 1. AUTENTICAÇÃO E CONTROLE DE SESSÃO
-// --------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
     configurarLogin();
@@ -51,6 +49,29 @@ function configurarLogin() {
         e.preventDefault();
         const email = document.getElementById("loginEmail").value.trim();
         const senha = document.getElementById("loginSenha").value.trim();
+        // Acesso demonstrativo do professor (somente front-end)
+if (
+    email === "professor@unimatricula.br" &&
+    senha === "123456"
+) {
+    usuarioLogado = {
+        id: 0,
+        nome: "Ana Souza",
+        email: "professor@unimatricula.br",
+        perfil: "professor"
+    };
+
+    localStorage.setItem(
+        "unimatricula_usuario",
+        JSON.stringify(usuarioLogado)
+    );
+
+    formLogin.reset();
+    iniciarSistema();
+    mostrarMensagem("Acesso demonstrativo do professor realizado!");
+
+    return;
+}
 
         try {
             const resposta = await fetch(`${API_URL}/auth/login`, {
@@ -77,9 +98,8 @@ function configurarLogin() {
         }
     });
 }
-// --------------------------------------------------
+
 // SUPLEMENTO: MOSTRAR / OCULTAR SENHA (OLHINHO)
-// --------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.getElementById("togglePassword");
@@ -129,13 +149,10 @@ async function iniciarSistema() {
     
 const nomeExibicao =
     usuarioLogado.perfil === "aluno"
-        ? "Mariana Oliveira"
+        ? "aluno@unimatricula.br"
         : usuarioLogado.nome;
 
-const emailExibicao =
-    usuarioLogado.perfil === "aluno"
-        ? "mariana.oliveira@exemplo.com"
-        : usuarioLogado.email;
+const emailExibicao = usuarioLogado.email;
 
 
 const nomeEl = document.getElementById("userName");
@@ -155,6 +172,32 @@ if (inicialEl) {
 }
     const badgeEl = document.getElementById("userRoleBadge");
 
+const nomesPerfis = {
+    aluno: "Portal do Aluno",
+    instituicao: "Gestão Acadêmica",
+    professor: "Portal do Professor"
+};
+
+if (badgeEl) {
+    badgeEl.textContent =
+        nomesPerfis[usuarioLogado.perfil] || "Portal Acadêmico";
+}
+
+document.querySelectorAll(".menu-instituicao").forEach(el => {
+    el.style.display =
+        usuarioLogado.perfil === "instituicao" ? "flex" : "none";
+});
+
+document.querySelectorAll(".menu-aluno").forEach(el => {
+    el.style.display =
+        usuarioLogado.perfil === "aluno" ? "flex" : "none";
+});
+
+document.querySelectorAll(".menu-professor").forEach(el => {
+    el.style.display =
+        usuarioLogado.perfil === "professor" ? "flex" : "none";
+});
+
     if (badgeEl) badgeEl.textContent = usuarioLogado.perfil === 'instituicao' ? 'Gestão Acadêmica' : 'Portal do Aluno';
 
     document.querySelectorAll(".menu-instituicao").forEach(el => {
@@ -162,21 +205,39 @@ if (inicialEl) {
     });
 
     await carregarDadosDoServidor();
+
+navegarPara(
+    usuarioLogado.perfil === "professor"
+        ? "professorDashboard"
+        : "dashboard"
+);
     navegarPara("dashboard");
 }
 
 async function carregarDadosDoServidor() {
     try {
-        const [resDisc, resTurmas, resMatriculas] = await Promise.all([
+        const [resDisc, resTurmas] = await Promise.all([
             fetch(`${API_URL}/disciplinas`),
-            fetch(`${API_URL}/turmas`),
-            fetch(`${API_URL}/matriculas/${usuarioLogado.id}`)
+            fetch(`${API_URL}/turmas`)
         ]);
 
         dados.disciplinas = await resDisc.json();
         dados.turmas = await resTurmas.json();
-        
+
+        // O professor usa os dados das turmas, sem consultar matrículas individuais
+        if (usuarioLogado.perfil === "professor") {
+            dados.matriculas = [];
+            renderizarTudo();
+            return;
+        }
+
+        // Aluno e instituição continuam usando o carregamento original
+        const resMatriculas = await fetch(
+            `${API_URL}/matriculas/${usuarioLogado.id}`
+        );
+
         const idsMatriculas = await resMatriculas.json();
+
         dados.matriculas = idsMatriculas.map((turmaId, index) => ({
             id: index + 1,
             turmaId: turmaId,
@@ -185,15 +246,14 @@ async function carregarDadosDoServidor() {
         }));
 
         renderizarTudo();
+
     } catch (erro) {
         console.error("Erro ao carregar dados da API:", erro);
         mostrarMensagem("Erro ao carregar dados do servidor.", "danger");
     }
 }
 
-// --------------------------------------------------
 // 2. FUNÇÕES AUXILIARES
-// --------------------------------------------------
 
 function obterDisciplina(id) {
     return dados.disciplinas.find(disciplina => disciplina.id === Number(id) || disciplina.codigo === id);
@@ -229,6 +289,29 @@ function matriculado(turmaId) {
     return dados.matriculas.some(
         matricula => matricula.turmaId === Number(turmaId) && matricula.alunoId === usuarioLogado.id
     );
+}
+
+function temConflitoHorario(novaTurma) {
+    const minhasMatriculas = dados.matriculas.filter(
+        matricula => Number(matricula.alunoId) === Number(usuarioLogado.id)
+    );
+
+    return minhasMatriculas.some(matricula => {
+        const turmaMatriculada = obterTurma(matricula.turmaId);
+
+        if (!turmaMatriculada) return false;
+
+        // Não considera conflito com a própria turma
+        if (Number(turmaMatriculada.id) === Number(novaTurma.id)) {
+            return false;
+        }
+
+        // Verifica se o dia e o turno são iguais
+        return (
+            Number(turmaMatriculada.dia) === Number(novaTurma.dia) &&
+            Number(turmaMatriculada.turno) === Number(novaTurma.turno)
+        );
+    });
 }
 
 function formatarDia(dia) {
@@ -306,16 +389,17 @@ function confirmarAcao(mensagem, callback, titulo = "Confirmar ação") {
     modal.show();
 }
 
-// --------------------------------------------------
 // 3. NAVEGAÇÃO
-// --------------------------------------------------
 
 const titulosPaginas = {
     dashboard: ["Dashboard", "Visão geral do sistema acadêmico"],
     ofertas: ["Ofertas de turmas", "Consulte as disciplinas disponíveis"],
     matriculas: ["Minhas matrículas", "Acompanhe suas inscrições acadêmicas"],
     disciplinas: ["Disciplinas", "Gerenciamento do catálogo acadêmico"],
-    turmas: ["Gerenciar turmas", "Cadastro e gerenciamento das ofertas"]
+    turmas: ["Gerenciar turmas", "Cadastro e gerenciamento das ofertas"],
+    professorDashboard: ["Dashboard", "Resumo das suas atividades acadêmicas"],
+    professorTurmas: ["Minhas turmas", "Consulte as turmas atribuídas a você"],
+    professorAlunos: ["Alunos matriculados", "Acompanhe os alunos de suas turmas"]
 };
 
 function navegarPara(pagina) {
@@ -359,12 +443,11 @@ function renderizarTudo() {
     renderizarOfertas();
     renderizarMatriculas();
     renderizarDisciplinas();
+    renderizarPainelProfessor();
     renderizarTurmas();
 }
 
-// --------------------------------------------------
 // 4. DASHBOARD
-// --------------------------------------------------
 
 function renderizarDashboard() {
     const elDisc = document.getElementById("totalDisciplinas");
@@ -410,8 +493,86 @@ function renderizarDashboard() {
 }
 
 // --------------------------------------------------
-// 5. OFERTAS E FILTROS
+// ÁREA DO PROFESSOR
 // --------------------------------------------------
+
+function obterTurmasDoProfessor() {
+    if (usuarioLogado?.perfil !== "professor") return [];
+
+    const nomeProfessor = (usuarioLogado.nome || "")
+        .trim()
+        .toLocaleLowerCase("pt-BR");
+
+    return dados.turmas.filter(turma =>
+        (turma.professor || "")
+            .trim()
+            .toLocaleLowerCase("pt-BR") === nomeProfessor
+    );
+}
+
+function renderizarPainelProfessor() {
+    const turmasProfessor = obterTurmasDoProfessor();
+
+    const totalAlunos = turmasProfessor.reduce(
+        (total, turma) => total + vagasOcupadas(turma.id),
+        0
+    );
+
+    const totalTurmas = document.getElementById("professorTotalTurmas");
+    const totalAlunosEl = document.getElementById("professorTotalAlunos");
+
+    if (totalTurmas) totalTurmas.textContent = turmasProfessor.length;
+    if (totalAlunosEl) totalAlunosEl.textContent = totalAlunos;
+
+    const linhasTurmas = turmasProfessor.map(turma => `
+        <tr>
+            <td>
+                <span class="subject-name">
+                    ${escaparHTML(obterNomeDisciplina(turma.codigoDisciplina || turma.disciplinaId))}
+                </span>
+                <span class="subject-code">
+                    Turma ${escaparHTML(obterCodigoTurma(turma))}
+                </span>
+            </td>
+            <td>${escaparHTML(formatarDia(turma.dia))}</td>
+            <td>${escaparHTML(formatarTurno(turma.turno))}</td>
+            <td>
+                <span class="badge-soft">
+                    ${vagasOcupadas(turma.id)} alunos
+                </span>
+            </td>
+        </tr>
+    `).join("");
+
+    const corpoTurmas = document.getElementById("professorListaTurmas");
+    if (corpoTurmas) {
+        corpoTurmas.innerHTML =
+            linhasTurmas || vazio("Nenhuma turma está vinculada a este professor.");
+    }
+
+    const corpoTurmasDetalhe = document.getElementById("professorListaTurmasDetalhe");
+    if (corpoTurmasDetalhe) {
+        corpoTurmasDetalhe.innerHTML =
+            linhasTurmas || vazio("Nenhuma turma está vinculada a este professor.");
+    }
+
+    const corpoAlunos = document.getElementById("professorListaAlunos");
+
+    if (corpoAlunos) {
+        corpoAlunos.innerHTML = turmasProfessor.length
+            ? turmasProfessor.map(turma => `
+                <tr>
+                    <td>${escaparHTML(obterNomeDisciplina(turma.codigoDisciplina || turma.disciplinaId))}</td>
+                    <td>Turma ${escaparHTML(obterCodigoTurma(turma))}</td>
+                    <td>${vagasOcupadas(turma.id)}</td>
+                    <td>${Number(turma.vagasTotais || 0)}</td>
+                </tr>
+            `).join("")
+            : vazio("Nenhuma turma encontrada para este professor.");
+    }
+}
+
+// 5. OFERTAS E FILTROS
 
 function renderizarOfertas() {
     const inputPesquisa = document.getElementById("filtroOferta");
@@ -496,9 +657,7 @@ function renderizarOfertas() {
     }
 });
 
-// --------------------------------------------------
 // 6. MATRÍCULAS COM API
-// --------------------------------------------------
 
 async function realizarMatricula(turmaId) {
     if (usuarioLogado.perfil !== 'aluno') {
@@ -511,6 +670,15 @@ async function realizarMatricula(turmaId) {
         mostrarMensagem("Turma não encontrada.", "danger");
         return;
     }
+
+// Impede matrícula em turmas do mesmo dia e turno
+if (temConflitoHorario(turma)) {
+    mostrarMensagem(
+        `Não foi possível realizar a matrícula. Você já está matriculado em outra turma na ${formatarDia(turma.dia)}, no turno ${formatarTurno(turma.turno)}. Escolha uma turma de outro dia ou turno.`,
+        "warning"
+    );
+    return;
+}
 
     try {
         const resposta = await fetch(`${API_URL}/matriculas`, {
@@ -602,9 +770,7 @@ function renderizarMatriculas() {
     }).join("");
 }
 
-// --------------------------------------------------
 // 7. DISCIPLINAS COM API
-// --------------------------------------------------
 
 function renderizarDisciplinas() {
     const corpo = document.getElementById("listaDisciplinas");
@@ -693,9 +859,7 @@ async function excluirDisciplina(codigo) {
     );
 }
 
-// --------------------------------------------------
-// 8. GERENCIAMENTO DE TURMAS COM API
-// --------------------------------------------------
+// GERENCIAMENTO DE TURMAS COM API
 
 function atualizarSelectDisciplinas() {
     const select = document.getElementById("disciplinaTurma");
@@ -808,10 +972,6 @@ async function excluirTurma(turmaId) {
         "Excluir oferta"
     );
 }
-
-// --------------------------------------------------
-// 9. EVENTOS DOS BOTÕES DINÂMICOS E RODAPÉ
-// --------------------------------------------------
 
 document.addEventListener("click", evento => {
     const botaoMatricula = evento.target.closest("[data-enroll]");

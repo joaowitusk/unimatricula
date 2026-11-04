@@ -638,10 +638,6 @@ select {
     }
 }
 
-/* ================================================= */
-/* SUPLEMENTO: TELA DE LOGIN INSTITUCIONAL           */
-/* ================================================= */
-
 .login-wrapper {
     position: fixed;
     top: 0;
@@ -670,7 +666,7 @@ select {
     margin: 0 auto 12px;
 }
 
-/* ===== AJUSTES VISUAIS DO PORTAL DO ALUNO ===== */
+/* AJUSTES VISUAIS DO PORTAL DO ALUNO */
 
 :root {
     --cor-institucional: #003b71;
@@ -697,7 +693,7 @@ body {
     box-sizing: border-box;
 }
 
-/* Evita que o conteúdo fique limitado a uma coluna estreita */
+
 #appContainer main,
 #appContainer .main-content,
 #appContainer .conteudo-principal,
@@ -721,13 +717,13 @@ button[type="submit"] {
     background-color: var(--cor-institucional);
 }
 
-/* Cartões e áreas de conteúdo */
+
 .card,
 .dashboard-card {
     border-color: var(--cor-borda);
 }
 
-/* Melhor adaptação a telas menores */
+
 @media (max-width: 768px) {
     #appContainer {
         width: 100%;
@@ -743,7 +739,7 @@ button[type="submit"] {
     }
 }
 
-/* Ajuste do rodapé do usuário e do botão de sair */
+
 .sidebar-footer {
     display: flex;
     align-items: center;
@@ -779,7 +775,7 @@ button[type="submit"] {
     box-sizing: border-box;
 }
 
-/* Ajuste fino do rodapé: texto compacto e botão separado */
+
 .sidebar-footer {
     gap: 7px;
     overflow: hidden;
@@ -813,4 +809,19 @@ button[type="submit"] {
     min-width: 32px;
     height: 38px;
     margin: 0;
+}
+
+/* Área do professor — identidade visual UniMatrícula */
+
+.menu-professor {
+    display: none;
+}
+
+#page-professorDashboard .stat-card {
+    min-height: 145px;
+}
+
+#page-professorAlunos .alert {
+    color: #64748b;
+    background: #f8fafc;
 }

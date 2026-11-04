@@ -99,6 +99,23 @@
                     <i class="bi bi-calendar-week"></i>
                     <span>Gerenciar turmas</span>
                 </button>
+
+                <!-- Menu exclusivo do professor -->
+<button class="nav-link menu-professor" data-page="professorDashboard" style="display:none">
+    <i class="bi bi-grid-1x2"></i>
+    <span>Dashboard</span>
+</button>
+
+<button class="nav-link menu-professor" data-page="professorTurmas" style="display:none">
+    <i class="bi bi-calendar-week"></i>
+    <span>Minhas turmas</span>
+</button>
+
+<button class="nav-link menu-professor" data-page="professorAlunos" style="display:none">
+    <i class="bi bi-people"></i>
+    <span>Alunos matriculados</span>
+</button>
+
             </nav>
 
             <div class="sidebar-footer d-flex justify-content-between align-items-center">
@@ -146,7 +163,7 @@
                     <div class="welcome-banner">
                         <div>
                             <span class="welcome-label">PORTAL UNIVERSITÁRIO</span>
-                            <h3>Bem-vindo ao UniMatrícula!</h3>
+                            <h3>Bem-vindo Professora!</h3>
                             <p>
                                 Consulte disciplinas, confira as ofertas
                                 e organize sua vida acadêmica.
@@ -434,6 +451,120 @@
                         </div>
                     </div>
                 </section>
+
+<!-- ÁREA DO PROFESSOR -->
+
+<section class="page-section" id="page-professorDashboard">
+    <div class="welcome-banner">
+        <div>
+            <span class="welcome-label">PORTAL DO PROFESSOR</span>
+            <h3>Bem-vinda, professora!</h3>
+            <p>Consulte suas turmas e acompanhe a quantidade de alunos matriculados.</p>
+        </div>
+        <i class="bi bi-easel2 welcome-icon"></i>
+    </div>
+
+    <div class="row g-3 mt-3">
+        <div class="col-12 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="bi bi-calendar-week"></i>
+                </div>
+                <p>Minhas turmas</p>
+                <h3 id="professorTotalTurmas">0</h3>
+                <small>Turmas atribuídas ao seu perfil</small>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="bi bi-people"></i>
+                </div>
+                <p>Alunos matriculados</p>
+                <h3 id="professorTotalAlunos">0</h3>
+                <small>Total informado nas turmas</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-card mt-4">
+        <div class="section-heading">
+            <div>
+                <h4>Resumo das minhas turmas</h4>
+                <p>Disciplinas atribuídas ao seu perfil.</p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Disciplina</th>
+                        <th>Dia</th>
+                        <th>Turno</th>
+                        <th>Alunos</th>
+                    </tr>
+                </thead>
+                <tbody id="professorListaTurmas"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="page-section" id="page-professorTurmas">
+    <div class="page-intro">
+        <div>
+            <h3>Minhas turmas</h3>
+            <p>Visualize as turmas vinculadas ao seu nome no sistema.</p>
+        </div>
+    </div>
+
+    <div class="content-card">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Disciplina</th>
+                        <th>Dia</th>
+                        <th>Turno</th>
+                        <th>Alunos matriculados</th>
+                    </tr>
+                </thead>
+                <tbody id="professorListaTurmasDetalhe"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="page-section" id="page-professorAlunos">
+    <div class="page-intro">
+        <div>
+            <h3>Alunos matriculados</h3>
+            <p>Resumo de matrículas por turma.</p>
+        </div>
+    </div>
+
+    <div class="content-card">
+        <div class="alert alert-light border small">
+            A API atual informa a quantidade de vagas ocupadas, mas ainda não disponibiliza os nomes dos alunos por turma. Por isso, esta tela apresenta os totais.
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Disciplina</th>
+                        <th>Turma</th>
+                        <th>Matriculados</th>
+                        <th>Vagas totais</th>
+                    </tr>
+                </thead>
+                <tbody id="professorListaAlunos"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
 
                 <footer class="page-footer mt-4 text-muted small text-center">
                     UniMatrícula &copy; <span id="anoAtual"></span> — Projeto acadêmico demonstrativo.
