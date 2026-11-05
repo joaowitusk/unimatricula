@@ -44,6 +44,7 @@ function criarTabelasESeed() {
             professor TEXT,
             dia INTEGER,
             turno INTEGER,
+            horario TEXT,
             vagasTotais INTEGER,
             vagasOcupadas INTEGER DEFAULT 0,
             FOREIGN KEY(codigoDisciplina) REFERENCES disciplinas(codigo)
@@ -75,8 +76,8 @@ function criarTabelasESeed() {
                 db.run("INSERT OR IGNORE INTO disciplinas VALUES ('INF102', 'Estruturas de Dados', 80)");
                 db.run("INSERT OR IGNORE INTO disciplinas VALUES ('MAT101', 'Matemática para Computação', 60)");
 
-                db.run("INSERT INTO turmas (codigoDisciplina, professor, dia, turno, vagasTotais, vagasOcupadas) VALUES ('INF101', 'Ana Souza', 2, 1, 30, 1)");
-                db.run("INSERT INTO turmas (codigoDisciplina, professor, dia, turno, vagasTotais, vagasOcupadas) VALUES ('INF102', 'Carlos Lima', 3, 3, 25, 0)");
+                db.run("INSERT INTO turmas (codigoDisciplina, professor, dia, turno, horario, vagasTotais, vagasOcupadas) VALUES ('INF101', 'Ana Souza', 2, 1, '19:00-20:40', 30, 1)");
+                db.run("INSERT INTO turmas (codigoDisciplina, professor, dia, turno, horario, vagasTotais, vagasOcupadas) VALUES ('INF102', 'Carlos Lima', 3, 3, '21:00-22:30', 25, 0)");
                 
                 db.run("INSERT INTO matriculas (alunoId, turmaId) VALUES (1, 1)");
                 console.log("Banco de dados populado com usuários e dados acadêmicos seguros.");
@@ -143,11 +144,26 @@ app.post('/api/disciplinas', (req, res) => {
     });
 });
 
+// Rota DELETE de disciplinas com exclusão em cascata segura
 app.delete('/api/disciplinas/:codigo', (req, res) => {
     const { codigo } = req.params;
-    db.run("DELETE FROM disciplinas WHERE codigo = ?", [codigo], function(err) {
-        if (err) return res.status(500).json({ erro: err.message });
-        res.json({ mensagem: "Disciplina excluída com sucesso!" });
+    
+    db.serialize(() => {
+        db.run("DELETE FROM matriculas WHERE turmaId IN (SELECT id FROM turmas WHERE codigoDisciplina = ?)", [codigo], (err) => {
+            if (err) console.error("Erro ao limpar matrículas:", err);
+            
+            db.run("DELETE FROM turmas WHERE codigoDisciplina = ?", [codigo], (err) => {
+                if (err) console.error("Erro ao limpar turmas:", err);
+                
+                db.run("DELETE FROM disciplinas WHERE codigo = ?", [codigo], function(err) {
+                    if (err) return res.status(500).json({ erro: err.message });
+                    if (this.changes === 0) {
+                        return res.status(404).json({ erro: "Disciplina não encontrada." });
+                    }
+                    res.json({ mensagem: "Disciplina e seus vínculos excluídos com sucesso!" });
+                });
+            });
+        });
     });
 });
 
@@ -159,9 +175,11 @@ app.get('/api/turmas', (req, res) => {
 });
 
 app.post('/api/turmas', (req, res) => {
-    const { codigoDisciplina, professor, dia, turno, vagasTotais } = req.body;
-    db.run("INSERT INTO turmas (codigoDisciplina, professor, dia, turno, vagasTotais, vagasOcupadas) VALUES (?, ?, ?, ?, ?, 0)",
-        [codigoDisciplina, professor, dia, turno, vagasTotais], function(err) {
+    console.log("DADOS RECEBIDOS DO FRONT-END:", req.body);
+    const { codigoDisciplina, professor, dia, turno, horario, vagasTotais } = req.body;
+    const horarioFinal = (horario && horario.trim() !== "") ? horario : "08:00-09:40";
+    db.run("INSERT INTO turmas (codigoDisciplina, professor, dia, turno, horario, vagasTotais, vagasOcupadas) VALUES (?, ?, ?, ?, ?, ?, 0)",
+        [codigoDisciplina, professor, dia, turno, horarioFinal, vagasTotais], function(err) {
             if (err) return res.status(400).json({ erro: err.message });
             res.json({ mensagem: "Turma ofertada com sucesso!", id: this.lastID });
         });

@@ -597,4 +597,29 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="app.js"></script>
 </body>
+<!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Script para atualizar o horário automaticamente ao escolher o turno -->
+    <script>
+        document.getElementById('turnoTurma').addEventListener('change', function() {
+            const turnoSelecionado = this.value;
+            const inputHorario = document.getElementById('horarioTurma');
+
+            if (inputHorario.value.trim() === "") {
+                if (turnoSelecionado === "1") { // Manhã
+                    inputHorario.value = "08:00-11:40";
+                } else if (turnoSelecionado === "2") { // Tarde
+                    inputHorario.value = "13:30-17:10";
+                } else if (turnoSelecionado === "3") { // Noite
+                    inputHorario.value = "19:00-22:30";
+                }
+            }
+
+        
+        });
+    </script>
+</body>
+</html>
 </html>

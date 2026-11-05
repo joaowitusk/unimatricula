@@ -887,9 +887,10 @@ if (formTurma) {
         const professor = document.getElementById("professorTurma").value.trim();
         const dia = Number(document.getElementById("diaTurma").value);
         const turno = Number(document.getElementById("turnoTurma").value);
+        const horario = document.getElementById("horarioTurma").value.trim();
         const vagasTotais = Number(document.getElementById("vagasTurma").value);
 
-        if (!codigoDisciplina || !professor || !dia || !turno || !vagasTotais) {
+        if (!codigoDisciplina || !professor || !dia || !turno || !horario || !vagasTotais) {
             mostrarMensagem("Preencha todos os campos da turma.", "warning");
             return;
         }
@@ -898,7 +899,7 @@ if (formTurma) {
             const resposta = await fetch(`${API_URL}/turmas`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ codigoDisciplina, professor, dia, turno, vagasTotais })
+                body: JSON.stringify({ codigoDisciplina, professor, dia, turno, horario, vagasTotais })
             });
 
             if (!resposta.ok) {
