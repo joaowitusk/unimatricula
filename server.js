@@ -175,7 +175,7 @@ app.get('/api/turmas', (req, res) => {
 });
 
 app.post('/api/turmas', (req, res) => {
-    console.log("DADOS RECEBIDOS DO FRONT-END:", req.body);
+    
     const { codigoDisciplina, professor, dia, turno, horario, vagasTotais } = req.body;
     const horarioFinal = (horario && horario.trim() !== "") ? horario : "08:00-09:40";
     db.run("INSERT INTO turmas (codigoDisciplina, professor, dia, turno, horario, vagasTotais, vagasOcupadas) VALUES (?, ?, ?, ?, ?, ?, 0)",
@@ -241,6 +241,90 @@ app.delete('/api/matriculas/:alunoId/:turmaId', (req, res) => {
         });
     });
 });
+
+// ==========================================
+// ROTAS DE GESTÃO DE ALUNOS (ADMIN)
+// ==========================================
+
+app.post('/api/alunos', async (req, res) => {
+    const { nome, email } = req.body;
+
+    if (!nome || !email) {
+        return res.status(400).json({ error: 'Nome e e-mail são obrigatórios.' });
+    }
+
+    try {
+        const senhaHash = await bcrypt.hash("123456", 10);
+        const query = `INSERT INTO usuarios (nome, email, senha, perfil) VALUES (?, ?, ?, 'aluno')`;
+        
+        db.run(query, [nome, email, senhaHash], function(err) {
+            if (err) {
+                return res.status(500).json({ error: 'Erro ao cadastrar aluno (E-mail já cadastrado?).' });
+            }
+            res.status(201).json({ 
+                id: this.lastID, 
+                nome, 
+                email, 
+                perfil: 'aluno',
+                mensagem: 'Aluno cadastrado com sucesso! Senha padrão: 123456' 
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro interno no servidor.' });
+    }
+});
+
+app.get('/api/alunos', (req, res) => {
+    db.all(`SELECT id, nome, email FROM usuarios WHERE perfil = 'aluno'`, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro ao buscar alunos.' });
+        }
+        res.json(rows);
+    });
+});
+
+
+// ==========================================
+// EXCLUIR ALUNO (ADMIN)
+// ==========================================
+
+app.delete('/api/alunos/:id', (req, res) => {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({
+            error: 'ID do aluno inválido.'
+        });
+    }
+
+    const query = `
+        DELETE FROM usuarios
+        WHERE id = ? AND perfil = 'aluno'
+    `;
+
+    db.run(query, [id], function(err) {
+        if (err) {
+            console.error('Erro ao excluir aluno:', err);
+
+            return res.status(500).json({
+                error: 'Erro ao excluir aluno. Verifique se existem matrículas vinculadas.'
+            });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({
+                error: 'Aluno não encontrado.'
+            });
+        }
+
+        return res.json({
+            mensagem: 'Aluno excluído com sucesso!',
+            id: id
+        });
+    });
+});
+
+
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);

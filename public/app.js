@@ -397,6 +397,7 @@ const titulosPaginas = {
     matriculas: ["Minhas matrículas", "Acompanhe suas inscrições acadêmicas"],
     disciplinas: ["Disciplinas", "Gerenciamento do catálogo acadêmico"],
     turmas: ["Gerenciar turmas", "Cadastro e gerenciamento das ofertas"],
+    alunos: ["Gestão de alunos", "Cadastro e gerenciamento de alunos"],
     professorDashboard: ["Dashboard", "Resumo das suas atividades acadêmicas"],
     professorTurmas: ["Minhas turmas", "Consulte as turmas atribuídas a você"],
     professorAlunos: ["Alunos matriculados", "Acompanhe os alunos de suas turmas"]
@@ -445,6 +446,7 @@ function renderizarTudo() {
     renderizarDisciplinas();
     renderizarPainelProfessor();
     renderizarTurmas();
+    carregarAlunosAdmin();
 }
 
 // 4. DASHBOARD
@@ -997,9 +999,145 @@ document.addEventListener("click", evento => {
     if (botaoExcluirTurma) {
         excluirTurma(Number(botaoExcluirTurma.dataset.deleteTurma));
     }
+
+        const botaoExcluirAluno = evento.target.closest("[data-excluir-aluno]");
+
+    if (botaoExcluirAluno) {
+        excluirAluno(Number(botaoExcluirAluno.dataset.excluirAluno));
+        return;
+    }
 });
 
 const elementoAno = document.getElementById("anoAtual");
 if (elementoAno) {
     elementoAno.textContent = new Date().getFullYear();
 }
+
+
+
+async function carregarAlunosAdmin() {
+    const tbody = document.getElementById("tabelaAlunosCorpo");
+    if (!tbody) return;
+
+    try {
+        const resposta = await fetch(`${API_URL}/alunos`);
+
+        if (!resposta.ok) {
+            throw new Error("Erro ao buscar alunos.");
+        }
+
+        const alunos = await resposta.json();
+
+        if (!Array.isArray(alunos) || alunos.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        Nenhum aluno cadastrado.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = alunos.map(aluno => `
+            <tr>
+                <td>${escaparHTML(aluno.id)}</td>
+                <td>${escaparHTML(aluno.nome || aluno.name)}</td>
+                <td>${escaparHTML(aluno.email)}</td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-outline-danger btn-sm"
+                        data-excluir-aluno="${escaparHTML(aluno.id)}">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+
+    } catch (erro) {
+        console.error("Erro ao carregar alunos:", erro);
+        mostrarMensagem("Não foi possível carregar os alunos.", "danger");
+    }
+}
+
+
+// Cadastro de aluno
+const formCadastrarAluno = document.getElementById("formCadastrarAluno");
+
+if (formCadastrarAluno) {
+    formCadastrarAluno.addEventListener("submit", async evento => {
+        evento.preventDefault();
+
+        const nome = document.getElementById("adminNomeAluno")?.value.trim();
+        const email = document.getElementById("adminEmailAluno")?.value.trim();
+
+        if (!nome || !email) {
+            mostrarMensagem("Preencha o nome e o e-mail.", "warning");
+            return;
+        }
+
+        try {
+            const resposta = await fetch(`${API_URL}/alunos`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ nome, email })
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                mostrarMensagem(
+                    resultado.erro || resultado.error || "Erro ao cadastrar aluno.",
+                    "danger"
+                );
+                return;
+            }
+
+            formCadastrarAluno.reset();
+
+            await carregarAlunosAdmin();
+
+            mostrarMensagem("Aluno cadastrado com sucesso!");
+
+        } catch (erro) {
+            console.error("Erro ao cadastrar aluno:", erro);
+            mostrarMensagem("Não foi possível conectar ao servidor.", "danger");
+        }
+    });
+}
+
+async function excluirAluno(alunoId) {
+    confirmarAcao(
+        "Deseja realmente excluir este aluno? Esta operação não poderá ser desfeita.",
+        async () => {
+            try {
+                const resposta = await fetch(`${API_URL}/alunos/${alunoId}`, {
+                    method: "DELETE"
+                });
+
+                const resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    mostrarMensagem(
+                        resultado.erro || resultado.error || "Não foi possível excluir o aluno.",
+                        "danger"
+                    );
+                    return;
+                }
+
+                await carregarAlunosAdmin();
+
+                mostrarMensagem("Aluno excluído com sucesso!");
+
+            } catch (erro) {
+                console.error("Erro ao excluir aluno:", erro);
+                mostrarMensagem("Não foi possível conectar ao servidor.", "danger");
+            }
+        },
+        "Excluir aluno"
+    );
+}
+

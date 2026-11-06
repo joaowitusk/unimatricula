@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sistema de atendimento e matrículas universitárias UniMatrícula">
+
     <title>UniMatrícula | Sistema Acadêmico</title>
 
     <!-- Bootstrap 5 -->
@@ -15,80 +17,148 @@
     <!-- Estilos do projeto -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <!-- ================= TELA DE LOGIN ================= -->
-    <div id="loginScreen" class="login-wrapper">
-        <div class="card shadow-lg p-4 login-card">
-            <div class="text-center mb-4">
-                <div class="brand-icon mx-auto mb-2"><i class="bi bi-mortarboard-fill"></i></div>
-                <h3 class="fw-bold">UniMatrícula</h3>
-                <p class="text-muted small">Acesse o sistema acadêmico</p>
-            </div>
-            <form id="formLogin">
-                <div class="mb-3">
-                    <label class="form-label" for="loginEmail">E-mail institucional</label>
-                    <input type="email" class="form-control" id="loginEmail" required placeholder="ex: aluno@unimatricula.br">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="loginSenha">Senha</label>
-                    <div class="input-group">
-                       <input type="password" class="form-control" id="loginSenha" required placeholder="******">
-                       <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar/Ocultar senha">
-                           <i class="bi bi-eye" id="toggleIcon"></i>
-                       </button>
-                    </div>    
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
+    <!-- ================================================== -->
+    <!-- TELA DE LOGIN -->
+    <!-- ================================================== -->
 
-                <!-- É EXATAMENTE AQUI QUE VOCÊ ADICIONA O 'd-none': -->
-                <div class="text-center mt-3 text-muted small d-none" id="blocoAcessosTeste">
+    <div id="loginScreen" class="login-wrapper">
+
+        <div class="card shadow-lg p-4 login-card">
+
+            <div class="text-center mb-4">
+
+                <div class="brand-icon mx-auto mb-2">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+
+                <h3 class="fw-bold">UniMatrícula</h3>
+
+                <p class="text-muted small">
+                    Acesse o sistema acadêmico
+                </p>
+
+            </div>
+
+            <form id="formLogin">
+
+                <div class="mb-3">
+
+                    <label class="form-label" for="loginEmail">
+                        E-mail institucional
+                    </label>
+
+                    <input
+                        type="email"
+                        class="form-control"
+                        id="loginEmail"
+                        required
+                        placeholder="ex: aluno@unimatricula.br"
+                    >
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label" for="loginSenha">
+                        Senha
+                    </label>
+
+                    <div class="input-group">
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="loginSenha"
+                            required
+                            placeholder="******"
+                        >
+
+                        <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            id="togglePassword"
+                            title="Mostrar/Ocultar senha"
+                        >
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                    Entrar
+                </button>
+
+                <div
+                    class="text-center mt-3 text-muted small d-none"
+                    id="blocoAcessosTeste"
+                >
                     <p class="mb-1">Acessos de Teste:</p>
                     <p class="mb-0">Aluno: aluno@unimatricula.br / 123456</p>
                     <p class="mb-0">Gestor: admin@unimatricula.br / 123456</p>
                 </div>
+
             </form>
-            <!-- Para isto (adicionando d-none no final da class): -->
-            <div class="mt-3 text-center text-muted small border-top pt-3 d-none">
-                <p class="mb-1"><strong>Acessos de Teste:</strong></p>
-                <p class="mb-1">Aluno: <code>aluno@unimatricula.br</code> / <code>123456</code></p>
-                <p class="mb-0">Gestor: <code>admin@unimatricula.br</code> / <code>123456</code></p>
-            </div>
+
         </div>
+
     </div>
 
-    <!-- ================= APLICAÇÃO PRINCIPAL ================= -->
+
+    <!-- ================================================== -->
+    <!-- APLICAÇÃO PRINCIPAL -->
+    <!-- ================================================== -->
+
     <div class="app-container" id="appContainer" style="display: none;">
 
-        <!-- Menu lateral -->
+        <!-- ================================================== -->
+        <!-- MENU LATERAL -->
+        <!-- ================================================== -->
+
         <aside class="sidebar" id="sidebar">
+
             <div class="brand">
+
                 <div class="brand-icon">
                     <i class="bi bi-mortarboard-fill"></i>
                 </div>
+
                 <div>
                     <h1>UniMatrícula</h1>
                     <small id="userRoleBadge">Portal Acadêmico</small>
                 </div>
+
             </div>
 
-            <div class="menu-label">MENU PRINCIPAL</div>
+            <div class="menu-label">
+                MENU PRINCIPAL
+            </div>
 
             <nav class="sidebar-nav" aria-label="Menu principal">
+
+                <!-- Dashboard -->
                 <button class="nav-link active" data-page="dashboard">
                     <i class="bi bi-grid-1x2"></i>
                     <span>Dashboard</span>
                 </button>
 
+                <!-- Ofertas -->
                 <button class="nav-link" data-page="ofertas">
                     <i class="bi bi-journal-bookmark"></i>
                     <span>Ofertas de turmas</span>
                 </button>
 
+                <!-- Matrículas -->
                 <button class="nav-link" data-page="matriculas">
                     <i class="bi bi-clipboard-check"></i>
                     <span>Minhas matrículas</span>
                 </button>
+
+                <!-- Menu exclusivo da instituição -->
 
                 <button class="nav-link menu-instituicao" data-page="disciplinas">
                     <i class="bi bi-book"></i>
@@ -100,42 +170,92 @@
                     <span>Gerenciar turmas</span>
                 </button>
 
+                <!-- NOVO BOTÃO: GESTÃO DE ALUNOS -->
+
+                <button class="nav-link menu-instituicao" data-page="alunos">
+                    <i class="bi bi-people"></i>
+                    <span>Gestão de alunos</span>
+                </button>
+
                 <!-- Menu exclusivo do professor -->
-<button class="nav-link menu-professor" data-page="professorDashboard" style="display:none">
-    <i class="bi bi-grid-1x2"></i>
-    <span>Dashboard</span>
-</button>
 
-<button class="nav-link menu-professor" data-page="professorTurmas" style="display:none">
-    <i class="bi bi-calendar-week"></i>
-    <span>Minhas turmas</span>
-</button>
+                <button
+                    class="nav-link menu-professor"
+                    data-page="professorDashboard"
+                    style="display: none;"
+                >
+                    <i class="bi bi-grid-1x2"></i>
+                    <span>Dashboard</span>
+                </button>
 
-<button class="nav-link menu-professor" data-page="professorAlunos" style="display:none">
-    <i class="bi bi-people"></i>
-    <span>Alunos matriculados</span>
-</button>
+                <button
+                    class="nav-link menu-professor"
+                    data-page="professorTurmas"
+                    style="display: none;"
+                >
+                    <i class="bi bi-calendar-week"></i>
+                    <span>Minhas turmas</span>
+                </button>
+
+                <button
+                    class="nav-link menu-professor"
+                    data-page="professorAlunos"
+                    style="display: none;"
+                >
+                    <i class="bi bi-people"></i>
+                    <span>Alunos matriculados</span>
+                </button>
 
             </nav>
 
+
+            <!-- Rodapé do menu -->
+
             <div class="sidebar-footer d-flex justify-content-between align-items-center">
+
                 <div class="d-flex align-items-center gap-2">
-                    <div class="user-avatar" id="userInitial">AL</div>
+
+                    <div class="user-avatar" id="userInitial">
+                        AL
+                    </div>
+
                     <div>
                         <strong id="userName">Usuário</strong>
-                        <small id="userEmail" class="d-block text-muted" style="font-size: 0.75rem;">email@teste.com</small>
+
+                        <small
+                            id="userEmail"
+                            class="d-block text-muted"
+                            style="font-size: 0.75rem;"
+                        >
+                            email@teste.com
+                        </small>
                     </div>
+
                 </div>
-                <button class="btn btn-sm btn-outline-danger" onclick="logout()" title="Sair do sistema">
+
+                <button
+                    class="btn btn-sm btn-outline-danger"
+                    onclick="logout()"
+                    title="Sair do sistema"
+                >
                     <i class="bi bi-box-arrow-right"></i>
                 </button>
+
             </div>
+
         </aside>
 
-        <!-- Área principal -->
+
+        <!-- ================================================== -->
+        <!-- ÁREA PRINCIPAL -->
+        <!-- ================================================== -->
+
         <main class="main-content">
 
+            <!-- Cabeçalho -->
+
             <header class="topbar">
+
                 <button
                     type="button"
                     class="btn btn-light menu-toggle"
@@ -154,84 +274,136 @@
                     <span class="status-indicator"></span>
                     <span class="status-text">Conectado ao Servidor</span>
                 </div>
+
             </header>
+
 
             <div class="content-wrapper">
 
-                <!-- Dashboard -->
+                <!-- ================================================== -->
+                <!-- DASHBOARD -->
+                <!-- ================================================== -->
+
                 <section class="page-section active" id="page-dashboard">
+
                     <div class="welcome-banner">
+
                         <div>
-                            <span class="welcome-label">PORTAL UNIVERSITÁRIO</span>
-                            <h3>Bem-vindo Professora!</h3>
+                            <span class="welcome-label">
+                                PORTAL UNIVERSITÁRIO
+                            </span>
+
+                            <h3>Bem-vindo(a) ao UniMatrícula!</h3>
+
                             <p>
                                 Consulte disciplinas, confira as ofertas
                                 e organize sua vida acadêmica.
                             </p>
                         </div>
+
                         <i class="bi bi-mortarboard welcome-icon"></i>
+
                     </div>
 
+
+                    <!-- Indicadores -->
+
                     <div class="row g-3 stats-grid">
+
                         <div class="col-12 col-sm-6 col-xl-3">
+
                             <div class="stat-card">
+
                                 <div class="stat-icon blue">
                                     <i class="bi bi-book"></i>
                                 </div>
+
                                 <p>Disciplinas</p>
                                 <h3 id="totalDisciplinas">0</h3>
                                 <small>Cadastradas no sistema</small>
+
                             </div>
+
                         </div>
 
+
                         <div class="col-12 col-sm-6 col-xl-3">
+
                             <div class="stat-card">
+
                                 <div class="stat-icon purple">
                                     <i class="bi bi-calendar-week"></i>
                                 </div>
+
                                 <p>Turmas ofertadas</p>
                                 <h3 id="totalTurmas">0</h3>
                                 <small>Ofertas disponíveis</small>
+
                             </div>
+
                         </div>
 
+
                         <div class="col-12 col-sm-6 col-xl-3">
+
                             <div class="stat-card">
+
                                 <div class="stat-icon green">
                                     <i class="bi bi-clipboard-check"></i>
                                 </div>
+
                                 <p>Minhas matrículas</p>
                                 <h3 id="totalMatriculas">0</h3>
                                 <small>Inscrições ativas</small>
+
                             </div>
+
                         </div>
 
+
                         <div class="col-12 col-sm-6 col-xl-3">
+
                             <div class="stat-card">
+
                                 <div class="stat-icon orange">
                                     <i class="bi bi-door-open"></i>
                                 </div>
+
                                 <p>Vagas disponíveis</p>
                                 <h3 id="totalVagas">0</h3>
                                 <small>Em todas as ofertas</small>
+
                             </div>
+
                         </div>
+
                     </div>
 
+
+                    <!-- Próximas oportunidades -->
+
                     <div class="content-card mt-4">
+
                         <div class="section-heading">
+
                             <div>
                                 <h4>Próximas oportunidades</h4>
                                 <p>Confira as turmas com vagas disponíveis.</p>
                             </div>
-                            <button class="btn btn-outline-primary"
-                                    data-go="ofertas">
+
+                            <button
+                                class="btn btn-outline-primary"
+                                data-go="ofertas"
+                            >
                                 Ver todas
                             </button>
+
                         </div>
 
                         <div class="table-responsive">
+
                             <table class="table align-middle">
+
                                 <thead>
                                     <tr>
                                         <th>Disciplina</th>
@@ -240,41 +412,80 @@
                                         <th>Vagas</th>
                                     </tr>
                                 </thead>
+
                                 <tbody id="dashboardTurmas"></tbody>
+
                             </table>
+
                         </div>
+
                     </div>
+
                 </section>
 
-                <!-- Ofertas de turmas -->
+
+                <!-- ================================================== -->
+                <!-- OFERTAS DE TURMAS -->
+                <!-- ================================================== -->
+
                 <section class="page-section" id="page-ofertas">
+
                     <div class="page-intro">
+
                         <div>
                             <h3>Ofertas de turmas</h3>
                             <p>Pesquise disciplinas e realize sua matrícula.</p>
                         </div>
+
                     </div>
 
+
                     <div class="content-card">
+
                         <div class="row g-3 mb-4">
+
                             <div class="col-12 col-md-5">
-                                <label for="filtroOferta" class="form-label">Buscar disciplina ou professor</label>
-                                <input type="search" class="form-control" id="filtroOferta" placeholder="Digite sua pesquisa...">
+
+                                <label for="filtroOferta" class="form-label">
+                                    Buscar disciplina ou professor
+                                </label>
+
+                                <input
+                                    type="search"
+                                    class="form-control"
+                                    id="filtroOferta"
+                                    placeholder="Digite sua pesquisa..."
+                                >
+
                             </div>
 
+
                             <div class="col-12 col-md-3">
-                                <label for="filtroTurno" class="form-label">Turno</label>
+
+                                <label for="filtroTurno" class="form-label">
+                                    Turno
+                                </label>
+
                                 <select class="form-select" id="filtroTurno">
+
                                     <option value="">Todos os turnos</option>
                                     <option value="1">Manhã</option>
                                     <option value="2">Tarde</option>
                                     <option value="3">Noite</option>
+
                                 </select>
+
                             </div>
 
+
                             <div class="col-12 col-md-4">
-                                <label for="filtroDia" class="form-label">Dia da semana</label>
+
+                                <label for="filtroDia" class="form-label">
+                                    Dia da semana
+                                </label>
+
                                 <select class="form-select" id="filtroDia">
+
                                     <option value="">Todos os dias</option>
                                     <option value="2">Segunda-feira</option>
                                     <option value="3">Terça-feira</option>
@@ -282,26 +493,42 @@
                                     <option value="5">Quinta-feira</option>
                                     <option value="6">Sexta-feira</option>
                                     <option value="7">Sábado</option>
+
                                 </select>
+
                             </div>
+
                         </div>
 
                         <div id="listaOfertas" class="row g-3"></div>
+
                     </div>
+
                 </section>
 
-                <!-- Minhas matrículas -->
+
+                <!-- ================================================== -->
+                <!-- MINHAS MATRÍCULAS -->
+                <!-- ================================================== -->
+
                 <section class="page-section" id="page-matriculas">
+
                     <div class="page-intro">
+
                         <div>
                             <h3>Minhas matrículas</h3>
                             <p>Consulte ou cancele suas inscrições em turmas.</p>
                         </div>
+
                     </div>
 
+
                     <div class="content-card">
+
                         <div class="table-responsive">
+
                             <table class="table align-middle">
+
                                 <thead>
                                     <tr>
                                         <th>Disciplina</th>
@@ -311,48 +538,117 @@
                                         <th>Ação</th>
                                     </tr>
                                 </thead>
+
                                 <tbody id="listaMatriculas"></tbody>
+
                             </table>
+
                         </div>
+
                     </div>
+
                 </section>
 
-                <!-- Cadastro de disciplinas -->
+
+                <!-- ================================================== -->
+                <!-- CADASTRO DE DISCIPLINAS -->
+                <!-- ================================================== -->
+
                 <section class="page-section" id="page-disciplinas">
+
                     <div class="page-intro">
+
                         <div>
                             <h3>Cadastro de disciplinas</h3>
                             <p>Gerencie as disciplinas da instituição.</p>
                         </div>
+
                     </div>
+
 
                     <div class="content-card mb-4">
+
                         <h4 class="card-title-custom">Nova disciplina</h4>
+
                         <form id="formDisciplina">
+
                             <div class="row g-3">
+
                                 <div class="col-12 col-md-3">
-                                    <label for="codigoDisciplina" class="form-label">Código</label>
-                                    <input class="form-control" id="codigoDisciplina" required maxlength="20" placeholder="Ex.: INF101">
+
+                                    <label for="codigoDisciplina" class="form-label">
+                                        Código
+                                    </label>
+
+                                    <input
+                                        class="form-control"
+                                        id="codigoDisciplina"
+                                        required
+                                        maxlength="20"
+                                        placeholder="Ex.: INF101"
+                                    >
+
                                 </div>
+
+
                                 <div class="col-12 col-md-6">
-                                    <label for="nomeDisciplina" class="form-label">Nome da disciplina</label>
-                                    <input class="form-control" id="nomeDisciplina" required maxlength="100" placeholder="Ex.: Programação Web">
+
+                                    <label for="nomeDisciplina" class="form-label">
+                                        Nome da disciplina
+                                    </label>
+
+                                    <input
+                                        class="form-control"
+                                        id="nomeDisciplina"
+                                        required
+                                        maxlength="100"
+                                        placeholder="Ex.: Programação Web"
+                                    >
+
                                 </div>
+
+
                                 <div class="col-12 col-md-3">
-                                    <label for="cargaHoraria" class="form-label">Carga horária (horas)</label>
-                                    <input type="number" class="form-control" id="cargaHoraria" min="1" max="1000" required placeholder="Ex.: 60">
+
+                                    <label for="cargaHoraria" class="form-label">
+                                        Carga horária (horas)
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="cargaHoraria"
+                                        min="1"
+                                        max="1000"
+                                        required
+                                        placeholder="Ex.: 60"
+                                    >
+
                                 </div>
+
                             </div>
+
+
                             <button class="btn btn-primary mt-4" type="submit">
-                                <i class="bi bi-plus-circle me-2"></i> Cadastrar disciplina
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Cadastrar disciplina
                             </button>
+
                         </form>
+
                     </div>
 
+
                     <div class="content-card">
-                        <h4 class="card-title-custom">Disciplinas cadastradas</h4>
+
+                        <h4 class="card-title-custom">
+                            Disciplinas cadastradas
+                        </h4>
+
                         <div class="table-responsive">
+
                             <table class="table align-middle">
+
                                 <thead>
                                     <tr>
                                         <th>Código</th>
@@ -361,40 +657,92 @@
                                         <th>Ação</th>
                                     </tr>
                                 </thead>
+
                                 <tbody id="listaDisciplinas"></tbody>
+
                             </table>
+
                         </div>
+
                     </div>
+
                 </section>
 
-                <!-- Gerenciamento de turmas -->
+
+                <!-- ================================================== -->
+                <!-- GERENCIAMENTO DE TURMAS -->
+                <!-- ================================================== -->
+
                 <section class="page-section" id="page-turmas">
+
                     <div class="page-intro">
+
                         <div>
                             <h3>Gerenciamento de turmas</h3>
                             <p>Crie ofertas e defina professores, horários e vagas.</p>
                         </div>
+
                     </div>
 
+
                     <div class="content-card mb-4">
-                        <h4 class="card-title-custom">Nova oferta de turma</h4>
+
+                        <h4 class="card-title-custom">
+                            Nova oferta de turma
+                        </h4>
+
                         <form id="formTurma">
+
                             <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label for="disciplinaTurma" class="form-label">Disciplina</label>
-                                    <select class="form-select" id="disciplinaTurma" required>
-                                        <option value="">Selecione uma disciplina</option>
-                                    </select>
-                                </div>
 
                                 <div class="col-12 col-md-6">
-                                    <label for="professorTurma" class="form-label">Professor</label>
-                                    <input class="form-control" id="professorTurma" required maxlength="100" placeholder="Nome do professor">
+
+                                    <label for="disciplinaTurma" class="form-label">
+                                        Disciplina
+                                    </label>
+
+                                    <select
+                                        class="form-select"
+                                        id="disciplinaTurma"
+                                        required
+                                    >
+                                        <option value="">
+                                            Selecione uma disciplina
+                                        </option>
+                                    </select>
+
                                 </div>
+
+
+                                <div class="col-12 col-md-6">
+
+                                    <label for="professorTurma" class="form-label">
+                                        Professor
+                                    </label>
+
+                                    <input
+                                        class="form-control"
+                                        id="professorTurma"
+                                        required
+                                        maxlength="100"
+                                        placeholder="Nome do professor"
+                                    >
+
+                                </div>
+
 
                                 <div class="col-12 col-md-4">
-                                    <label for="diaTurma" class="form-label">Dia da semana</label>
-                                    <select class="form-select" id="diaTurma" required>
+
+                                    <label for="diaTurma" class="form-label">
+                                        Dia da semana
+                                    </label>
+
+                                    <select
+                                        class="form-select"
+                                        id="diaTurma"
+                                        required
+                                    >
+
                                         <option value="">Selecione</option>
                                         <option value="2">Segunda-feira</option>
                                         <option value="3">Terça-feira</option>
@@ -402,40 +750,91 @@
                                         <option value="5">Quinta-feira</option>
                                         <option value="6">Sexta-feira</option>
                                         <option value="7">Sábado</option>
+
                                     </select>
+
                                 </div>
 
+
                                 <div class="col-12 col-md-4">
-                                    <label for="turnoTurma" class="form-label">Turno</label>
-                                    <select class="form-select" id="turnoTurma" required>
+
+                                    <label for="turnoTurma" class="form-label">
+                                        Turno
+                                    </label>
+
+                                    <select
+                                        class="form-select"
+                                        id="turnoTurma"
+                                        required
+                                    >
+
                                         <option value="">Selecione</option>
                                         <option value="1">Manhã</option>
                                         <option value="2">Tarde</option>
                                         <option value="3">Noite</option>
+
                                     </select>
+
                                 </div>
 
-                                <div class="col-12 col-md-4">
-                                    <label for="horarioTurma" class="form-label">Horário</label>
-                                    <input class="form-control" id="horarioTurma" required placeholder="Ex.: 08:00-09:40">
-                                </div>
 
                                 <div class="col-12 col-md-4">
-                                    <label for="vagasTurma" class="form-label">Quantidade de vagas</label>
-                                    <input type="number" class="form-control" id="vagasTurma" min="1" max="500" required value="30">
+
+                                    <label for="horarioTurma" class="form-label">
+                                        Horário
+                                    </label>
+
+                                    <input
+                                        class="form-control"
+                                        id="horarioTurma"
+                                        required
+                                        placeholder="Ex.: 08:00-09:40"
+                                    >
+
                                 </div>
+
+
+                                <div class="col-12 col-md-4">
+
+                                    <label for="vagasTurma" class="form-label">
+                                        Quantidade de vagas
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="vagasTurma"
+                                        min="1"
+                                        max="500"
+                                        required
+                                        value="30"
+                                    >
+
+                                </div>
+
                             </div>
 
+
                             <button class="btn btn-primary mt-4" type="submit">
-                                <i class="bi bi-plus-circle me-2"></i> Criar oferta
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Criar oferta
                             </button>
+
                         </form>
+
                     </div>
 
+
                     <div class="content-card">
-                        <h4 class="card-title-custom">Turmas ofertadas</h4>
+
+                        <h4 class="card-title-custom">
+                            Turmas ofertadas
+                        </h4>
+
                         <div class="table-responsive">
+
                             <table class="table align-middle">
+
                                 <thead>
                                     <tr>
                                         <th>Disciplina</th>
@@ -446,180 +845,524 @@
                                         <th>Ação</th>
                                     </tr>
                                 </thead>
+
                                 <tbody id="listaTurmasGerenciar"></tbody>
+
                             </table>
+
                         </div>
+
                     </div>
+
                 </section>
 
-<!-- ÁREA DO PROFESSOR -->
 
-<section class="page-section" id="page-professorDashboard">
-    <div class="welcome-banner">
-        <div>
-            <span class="welcome-label">PORTAL DO PROFESSOR</span>
-            <h3>Bem-vinda, professora!</h3>
-            <p>Consulte suas turmas e acompanhe a quantidade de alunos matriculados.</p>
-        </div>
-        <i class="bi bi-easel2 welcome-icon"></i>
-    </div>
+                <!-- ================================================== -->
+                <!-- GESTÃO DE ALUNOS - NOVA TELA ADMINISTRATIVA -->
+                <!-- ================================================== -->
 
-    <div class="row g-3 mt-3">
-        <div class="col-12 col-md-6">
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="bi bi-calendar-week"></i>
-                </div>
-                <p>Minhas turmas</p>
-                <h3 id="professorTotalTurmas">0</h3>
-                <small>Turmas atribuídas ao seu perfil</small>
-            </div>
-        </div>
+                <section class="page-section" id="page-alunos">
 
-        <div class="col-12 col-md-6">
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i class="bi bi-people"></i>
-                </div>
-                <p>Alunos matriculados</p>
-                <h3 id="professorTotalAlunos">0</h3>
-                <small>Total informado nas turmas</small>
-            </div>
-        </div>
-    </div>
+                    <div class="page-intro">
 
-    <div class="content-card mt-4">
-        <div class="section-heading">
-            <div>
-                <h4>Resumo das minhas turmas</h4>
-                <p>Disciplinas atribuídas ao seu perfil.</p>
-            </div>
-        </div>
+                        <div>
+                            <h3>Gestão de alunos</h3>
+                            <p>
+                                Cadastre novos alunos e consulte os registros existentes.
+                            </p>
+                        </div>
 
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>Disciplina</th>
-                        <th>Dia</th>
-                        <th>Turno</th>
-                        <th>Alunos</th>
-                    </tr>
-                </thead>
-                <tbody id="professorListaTurmas"></tbody>
-            </table>
-        </div>
-    </div>
-</section>
+                    </div>
 
-<section class="page-section" id="page-professorTurmas">
-    <div class="page-intro">
-        <div>
-            <h3>Minhas turmas</h3>
-            <p>Visualize as turmas vinculadas ao seu nome no sistema.</p>
-        </div>
-    </div>
 
-    <div class="content-card">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>Disciplina</th>
-                        <th>Dia</th>
-                        <th>Turno</th>
-                        <th>Alunos matriculados</th>
-                    </tr>
-                </thead>
-                <tbody id="professorListaTurmasDetalhe"></tbody>
-            </table>
-        </div>
-    </div>
-</section>
+                    <!-- Formulário de cadastro -->
 
-<section class="page-section" id="page-professorAlunos">
-    <div class="page-intro">
-        <div>
-            <h3>Alunos matriculados</h3>
-            <p>Resumo de matrículas por turma.</p>
-        </div>
-    </div>
+                    <div class="content-card mb-4">
 
-    <div class="content-card">
-        <div class="alert alert-light border small">
-            A API atual informa a quantidade de vagas ocupadas, mas ainda não disponibiliza os nomes dos alunos por turma. Por isso, esta tela apresenta os totais.
-        </div>
+                        <h4 class="card-title-custom">
+                            <i class="bi bi-person-plus me-2"></i>
+                            Cadastrar novo aluno
+                        </h4>
 
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>Disciplina</th>
-                        <th>Turma</th>
-                        <th>Matriculados</th>
-                        <th>Vagas totais</th>
-                    </tr>
-                </thead>
-                <tbody id="professorListaAlunos"></tbody>
-            </table>
-        </div>
-    </div>
-</section>
+                        <form id="formCadastrarAluno">
+
+                            <div class="row g-3">
+
+                                <div class="col-12 col-md-6">
+
+                                    <label for="adminNomeAluno" class="form-label">
+                                        Nome completo
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="adminNomeAluno"
+                                        placeholder="Digite o nome completo do aluno"
+                                        maxlength="100"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+
+                                    <label for="adminEmailAluno" class="form-label">
+                                        E-mail institucional
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        class="form-control"
+                                        id="adminEmailAluno"
+                                        placeholder="aluno@unimatricula.br"
+                                        maxlength="150"
+                                        required
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary mt-4"
+                            >
+                                <i class="bi bi-person-plus me-2"></i>
+                                Cadastrar aluno
+                            </button>
+
+                        </form>
+
+
+                        <div class="alert alert-info mt-3 mb-0 small">
+
+                            <i class="bi bi-info-circle me-2"></i>
+
+                            A senha inicial será definida pelo servidor como
+                            <strong>123456</strong>. O aluno poderá utilizar
+                            esse acesso para entrar no sistema.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Tabela de alunos cadastrados -->
+
+                    <div class="content-card">
+
+                        <div class="section-heading">
+
+                            <div>
+                                <h4>Alunos cadastrados</h4>
+                                <p>
+                                    Consulte os alunos registrados no sistema.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary"
+                                onclick="carregarAlunosAdmin()"
+                            >
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                Atualizar
+                            </button>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome do aluno</th>
+                                        <th>E-mail</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="tabelaAlunosCorpo">
+
+                                    <tr>
+                                        <td
+                                            colspan="3"
+                                            class="text-center text-muted"
+                                        >
+                                            Carregando alunos...
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ================================================== -->
+                <!-- ÁREA DO PROFESSOR -->
+                <!-- ================================================== -->
+
+
+                <!-- Dashboard do professor -->
+
+                <section
+                    class="page-section"
+                    id="page-professorDashboard"
+                >
+
+                    <div class="welcome-banner">
+
+                        <div>
+
+                            <span class="welcome-label">
+                                PORTAL DO PROFESSOR
+                            </span>
+
+                            <h3>Bem-vinda, professora!</h3>
+
+                            <p>
+                                Consulte suas turmas e acompanhe a quantidade
+                                de alunos matriculados.
+                            </p>
+
+                        </div>
+
+                        <i class="bi bi-easel2 welcome-icon"></i>
+
+                    </div>
+
+
+                    <div class="row g-3 mt-3">
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="stat-card">
+
+                                <div class="stat-icon blue">
+                                    <i class="bi bi-calendar-week"></i>
+                                </div>
+
+                                <p>Minhas turmas</p>
+                                <h3 id="professorTotalTurmas">0</h3>
+
+                                <small>
+                                    Turmas atribuídas ao seu perfil
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="stat-card">
+
+                                <div class="stat-icon green">
+                                    <i class="bi bi-people"></i>
+                                </div>
+
+                                <p>Alunos matriculados</p>
+                                <h3 id="professorTotalAlunos">0</h3>
+
+                                <small>
+                                    Total informado nas turmas
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="content-card mt-4">
+
+                        <div class="section-heading">
+
+                            <div>
+                                <h4>Resumo das minhas turmas</h4>
+                                <p>Disciplinas atribuídas ao seu perfil.</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>Disciplina</th>
+                                        <th>Dia</th>
+                                        <th>Turno</th>
+                                        <th>Alunos</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="professorListaTurmas"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Minhas turmas do professor -->
+
+                <section
+                    class="page-section"
+                    id="page-professorTurmas"
+                >
+
+                    <div class="page-intro">
+
+                        <div>
+                            <h3>Minhas turmas</h3>
+                            <p>
+                                Visualize as turmas vinculadas ao seu nome no sistema.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="content-card">
+
+                        <div class="table-responsive">
+
+                            <table class="table align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>Disciplina</th>
+                                        <th>Dia</th>
+                                        <th>Turno</th>
+                                        <th>Alunos matriculados</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="professorListaTurmasDetalhe"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Alunos matriculados do professor -->
+
+                <section
+                    class="page-section"
+                    id="page-professorAlunos"
+                >
+
+                    <div class="page-intro">
+
+                        <div>
+                            <h3>Alunos matriculados</h3>
+                            <p>Resumo de matrículas por turma.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="content-card">
+
+                        <div class="alert alert-light border small">
+
+                            A API atual informa a quantidade de vagas ocupadas,
+                            mas ainda não disponibiliza os nomes dos alunos
+                            por turma. Por isso, esta tela apresenta os totais.
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>Disciplina</th>
+                                        <th>Turma</th>
+                                        <th>Matriculados</th>
+                                        <th>Vagas totais</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="professorListaAlunos"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ================================================== -->
+                <!-- RODAPÉ -->
+                <!-- ================================================== -->
 
                 <footer class="page-footer mt-4 text-muted small text-center">
-                    UniMatrícula &copy; <span id="anoAtual"></span> — Projeto acadêmico demonstrativo.
+
+                    UniMatrícula &copy;
+
+                    <span id="anoAtual"></span>
+
+                    — Projeto acadêmico demonstrativo.
+
                 </footer>
+
             </div>
+
         </main>
+
     </div>
 
-    <!-- Mensagens de retorno (Toasts) -->
-    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Modal de Confirmação -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+    <!-- ================================================== -->
+    <!-- MENSAGENS DE RETORNO (TOASTS) -->
+    <!-- ================================================== -->
+
+    <div
+        class="toast-container position-fixed top-0 end-0 p-3"
+        id="toastContainer"
+        aria-live="polite"
+        aria-atomic="true"
+    ></div>
+
+
+    <!-- ================================================== -->
+    <!-- MODAL DE CONFIRMAÇÃO -->
+    <!-- ================================================== -->
+
+    <div
+        class="modal fade"
+        id="confirmModal"
+        tabindex="-1"
+        aria-labelledby="confirmTitle"
+        aria-hidden="true"
+    >
+
         <div class="modal-dialog modal-dialog-centered">
+
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmTitle">Confirmar ação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+
+                    <h5 class="modal-title" id="confirmTitle">
+                        Confirmar ação
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Fechar"
+                    ></button>
+
                 </div>
-                <div class="modal-body" id="confirmMessage">Deseja continuar?</div>
+
+
+                <div class="modal-body" id="confirmMessage">
+                    Deseja continuar?
+                </div>
+
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="confirmAction">Confirmar</button>
+
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-danger"
+                        id="confirmAction"
+                    >
+                        Confirmar
+                    </button>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="app.js"></script>
-</body>
-<!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="app.js"></script>
 
-    <!-- Script para atualizar o horário automaticamente ao escolher o turno -->
+    <!-- ================================================== -->
+    <!-- SCRIPTS -->
+    <!-- ================================================== -->
+
+    <!-- Bootstrap JS Bundle: carregar somente uma vez -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Preenchimento automático do horário conforme o turno -->
+
     <script>
-        document.getElementById('turnoTurma').addEventListener('change', function() {
-            const turnoSelecionado = this.value;
-            const inputHorario = document.getElementById('horarioTurma');
+        const campoTurnoTurma = document.getElementById('turnoTurma');
 
-            if (inputHorario.value.trim() === "") {
-                if (turnoSelecionado === "1") { // Manhã
-                    inputHorario.value = "08:00-11:40";
-                } else if (turnoSelecionado === "2") { // Tarde
-                    inputHorario.value = "13:30-17:10";
-                } else if (turnoSelecionado === "3") { // Noite
-                    inputHorario.value = "19:00-22:30";
+        if (campoTurnoTurma) {
+
+            campoTurnoTurma.addEventListener('change', function() {
+
+                const turnoSelecionado = this.value;
+
+                const inputHorario = document.getElementById('horarioTurma');
+
+                if (inputHorario.value.trim() === "") {
+
+                    if (turnoSelecionado === "") {
+                        inputHorario.value = "08:00-11:40";
+
+                    } else if (turnoSelecionado === "2") {
+                        inputHorario.value = "13:30-17:10";
+
+                    } else if (turnoSelecionado === "3") {
+                        inputHorario.value = "19:00-22:30";
+                    }
+
                 }
-            }
 
-        
-        });
+            });
+
+        }
     </script>
+
+
+    <!-- JavaScript principal do sistema: carregar somente uma vez -->
+
+    <script src="app.js"></script>
+
 </body>
-</html>
 </html>
