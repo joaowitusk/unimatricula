@@ -32,6 +32,14 @@ function criarTabelasESeed() {
             perfil TEXT NOT NULL -- 'aluno' ou 'instituicao'
         )`);
 
+        // Tabela exclusiva para Professores
+        db.run(`CREATE TABLE IF NOT EXISTS professores (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            senha TEXT NOT NULL
+        )`);
+
         db.run(`CREATE TABLE IF NOT EXISTS disciplinas (
             codigo TEXT PRIMARY KEY,
             nome TEXT NOT NULL,
@@ -319,6 +327,87 @@ app.delete('/api/alunos/:id', (req, res) => {
 
         return res.json({
             mensagem: 'Aluno excluído com sucesso!',
+            id: id
+        });
+    });
+});
+
+// ==========================================
+// ROTAS DE GESTÃO DE PROFESSORES (ADMIN)
+// ==========================================
+
+app.post('/api/gestaoprofessores', async (req, res) => {
+    const { nome, email } = req.body;
+
+    if (!nome || !email) {
+        return res.status(400).json({ error: 'Nome e e-mail são obrigatórios.' });
+    }
+
+    try {
+        const senhaHash = await bcrypt.hash("123456", 10);
+        const query = `INSERT INTO professores (nome, email, senha) VALUES (?, ?, ?)`;
+        
+        db.run(query, [nome, email, senhaHash], function(err) {
+            if (err) {
+                return res.status(500).json({ error: 'Erro ao cadastrar professor (E-mail já cadastrado?).' });
+            }
+            res.status(201).json({ 
+                id: this.lastID, 
+                nome, 
+                email, 
+                perfil: 'instituiçao',
+                mensagem: 'Professor cadastrado com sucesso! Senha padrão: 123456' 
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro interno no servidor.' });
+    }
+});
+
+app.get('/api/gestaoprofessores', (req, res) => {
+    db.all(`SELECT id, nome, email FROM professores`, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro ao buscar professor.' });
+        }
+        res.json(rows);
+    });
+});
+
+// ==========================================
+// EXCLUIR PROFESSOR (ADMIN)
+// ==========================================
+
+app.delete('/api/gestaoprofessores/:id', (req, res) => {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({
+            error: 'ID do professor inválido.'
+        });
+    }
+
+    const query = `
+        DELETE FROM professores
+        WHERE id = ?
+    `;
+
+    db.run(query, [id], function(err) {
+        if (err) {
+            console.error('Erro ao excluir professor:', err);
+
+            return res.status(500).json({
+                error: 'Erro ao excluir professor. Verifique se existem matrículas vinculadas.'
+            });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({
+                error: 'Professor não encontrado.'
+            });
+        }
+
+        return res.json({
+            mensagem: 'Professor excluído com sucesso!',
             id: id
         });
     });

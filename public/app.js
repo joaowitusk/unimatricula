@@ -29,7 +29,7 @@ const TURNOS = {
     3: "Noite"
 };
 
-// 1. AUTENTICAÇÃO E CONTROLE DE SESSÃO
+// #region 1. AUTENTICAÇÃO E CONTROLE DE SESSÃO
 
 document.addEventListener("DOMContentLoaded", () => {
     configurarLogin();
@@ -98,8 +98,8 @@ if (
         }
     });
 }
-
-// SUPLEMENTO: MOSTRAR / OCULTAR SENHA (OLHINHO)
+// #endregion
+// #region SUPLEMENTO: MOSTRAR / OCULTAR SENHA (OLHINHO)
 
 document.addEventListener("DOMContentLoaded", () => {
     const toggleBtn = document.getElementById("togglePassword");
@@ -252,8 +252,8 @@ async function carregarDadosDoServidor() {
         mostrarMensagem("Erro ao carregar dados do servidor.", "danger");
     }
 }
-
-// 2. FUNÇÕES AUXILIARES
+// #endregion
+// #region 2. FUNÇÕES AUXILIARES
 
 function obterDisciplina(id) {
     return dados.disciplinas.find(disciplina => disciplina.id === Number(id) || disciplina.codigo === id);
@@ -388,8 +388,8 @@ function confirmarAcao(mensagem, callback, titulo = "Confirmar ação") {
 
     modal.show();
 }
-
-// 3. NAVEGAÇÃO
+// #endregion
+// #region 3. NAVEGAÇÃO
 
 const titulosPaginas = {
     dashboard: ["Dashboard", "Visão geral do sistema acadêmico"],
@@ -398,6 +398,7 @@ const titulosPaginas = {
     disciplinas: ["Disciplinas", "Gerenciamento do catálogo acadêmico"],
     turmas: ["Gerenciar turmas", "Cadastro e gerenciamento das ofertas"],
     alunos: ["Gestão de alunos", "Cadastro e gerenciamento de alunos"],
+    professoresGestao: ["Gestão de Professores", "Cadastro e gerenciamento de professores"],
     professorDashboard: ["Dashboard", "Resumo das suas atividades acadêmicas"],
     professorTurmas: ["Minhas turmas", "Consulte as turmas atribuídas a você"],
     professorAlunos: ["Alunos matriculados", "Acompanhe os alunos de suas turmas"]
@@ -448,8 +449,8 @@ function renderizarTudo() {
     renderizarTurmas();
     carregarAlunosAdmin();
 }
-
-// 4. DASHBOARD
+// #endregion
+// #region 4. DASHBOARD
 
 function renderizarDashboard() {
     const elDisc = document.getElementById("totalDisciplinas");
@@ -495,7 +496,7 @@ function renderizarDashboard() {
 }
 
 // --------------------------------------------------
-// ÁREA DO PROFESSOR
+// #region ÁREA DO PROFESSOR
 // --------------------------------------------------
 
 function obterTurmasDoProfessor() {
@@ -573,8 +574,8 @@ function renderizarPainelProfessor() {
             : vazio("Nenhuma turma encontrada para este professor.");
     }
 }
-
-// 5. OFERTAS E FILTROS
+// #endregion
+// #region 5. OFERTAS E FILTROS
 
 function renderizarOfertas() {
     const inputPesquisa = document.getElementById("filtroOferta");
@@ -658,8 +659,8 @@ function renderizarOfertas() {
         el.addEventListener("change", renderizarOfertas);
     }
 });
-
-// 6. MATRÍCULAS COM API
+// #endregion
+// #region 6. MATRÍCULAS COM API
 
 async function realizarMatricula(turmaId) {
     if (usuarioLogado.perfil !== 'aluno') {
@@ -771,8 +772,8 @@ function renderizarMatriculas() {
         `;
     }).join("");
 }
-
-// 7. DISCIPLINAS COM API
+// #endregion
+// #region 7. DISCIPLINAS COM API
 
 function renderizarDisciplinas() {
     const corpo = document.getElementById("listaDisciplinas");
@@ -860,8 +861,8 @@ async function excluirDisciplina(codigo) {
         "Excluir disciplina"
     );
 }
-
-// GERENCIAMENTO DE TURMAS COM API
+// #endregion
+// #region GERENCIAMENTO DE TURMAS COM API
 
 function atualizarSelectDisciplinas() {
     const select = document.getElementById("disciplinaTurma");
@@ -1000,11 +1001,16 @@ document.addEventListener("click", evento => {
         excluirTurma(Number(botaoExcluirTurma.dataset.deleteTurma));
     }
 
-        const botaoExcluirAluno = evento.target.closest("[data-excluir-aluno]");
+    const botaoExcluirAluno = evento.target.closest("[data-excluir-aluno]");
 
     if (botaoExcluirAluno) {
         excluirAluno(Number(botaoExcluirAluno.dataset.excluirAluno));
         return;
+    }
+
+    const botaoExcluirProfessor = evento.target.closest("[data-excluir-professor]");
+    if(botaoExcluirProfessor){
+        excluirProfessor(Number(botaoExcluirProfessor.dataset.excluirProfessor));
     }
 });
 
@@ -1061,8 +1067,54 @@ async function carregarAlunosAdmin() {
     }
 }
 
+async function carregarProfessoresAdmin() {
+    const tbody = document.getElementById("tabelaProfessoresCorpo");
+    if (!tbody) return;
 
-// Cadastro de aluno
+    try {
+        const resposta = await fetch(`${API_URL}/gestaoprofessores`);
+
+        if (!resposta.ok) {
+            throw new Error("Erro ao buscar professores.");
+        }
+
+        const professores = await resposta.json();
+
+        if (!Array.isArray(professores) || professores.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        Nenhum professor cadastrado.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = professores.map(prof => `
+            <tr>
+                <td>${escaparHTML(prof.id)}</td>
+                <td>${escaparHTML(prof.nome || prof.name)}</td>
+                <td>${escaparHTML(prof.email)}</td>
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-outline-danger btn-sm"
+                        data-excluir-professor="${escaparHTML(prof.id)}">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+
+    } catch (erro) {
+        console.error("Erro ao carregar professores:", erro);
+        mostrarMensagem("Não foi possível carregar os professores.", "danger");
+    }
+}
+
+
+// #region Cadastro de aluno
 const formCadastrarAluno = document.getElementById("formCadastrarAluno");
 
 if (formCadastrarAluno) {
@@ -1140,4 +1192,82 @@ async function excluirAluno(alunoId) {
         "Excluir aluno"
     );
 }
+// #region Cadastro de professor
+const formCadastrarProfessor = document.getElementById("formCadastrarProfessor");
 
+if (formCadastrarProfessor) {
+    formCadastrarProfessor.addEventListener("submit", async evento => {
+        evento.preventDefault();
+
+        const nome = document.getElementById("adminNomeProfessor")?.value.trim();
+        const email = document.getElementById("adminEmailProfessor")?.value.trim();
+
+        if (!nome || !email) {
+            mostrarMensagem("Preencha o nome e o e-mail.", "warning");
+            return;
+        }
+
+        try {
+            const resposta = await fetch(`${API_URL}/gestaoprofessores`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ nome, email })
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                mostrarMensagem(
+                    resultado.erro || resultado.error || "Erro ao cadastrar professor.",
+                    "danger"
+                );
+                return;
+            }
+
+            formCadastrarProfessor.reset();
+
+            await carregarProfessoresAdmin();
+
+            mostrarMensagem("Professor cadastrado com sucesso!");
+
+        } catch (erro) {
+            console.error("Erro ao cadastrar professor:", erro);
+            mostrarMensagem("Não foi possível conectar ao servidor.", "danger");
+        }
+    });
+}
+
+async function excluirProfessor(professorId) {
+    confirmarAcao(
+        "Deseja realmente excluir este professor? Esta operação não poderá ser desfeita.",
+        async () => {
+            try {
+                const resposta = await fetch(`${API_URL}/gestaoprofessores/${professorId}`, {
+                    method: "DELETE"
+                });
+
+                const resultado = await resposta.json();
+
+                if (!resposta.ok) {
+                    mostrarMensagem(
+                        resultado.erro || resultado.error || "Não foi possível excluir o professor.",
+                        "danger"
+                    );
+                    return;
+                }
+
+                await carregarProfessoresAdmin();
+
+                mostrarMensagem("Professor excluído com sucesso!");
+
+            } catch (erro) {
+                console.error("Erro ao excluir professor:", erro);
+                mostrarMensagem("Não foi possível conectar ao servidor.", "danger");
+            }
+        },
+        "Excluir professor"
+    );
+}
+// #endregion
