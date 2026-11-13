@@ -771,7 +771,11 @@ function renderizarDisciplinas() {
     }
 
     corpo.innerHTML = dados.disciplinas.map(disciplina => {
-        const possuiTurmas = dados.turmas.some(turma => turma.codigoDisciplina === disciplina.codigo || turma.disciplinaId === disciplina.id);
+        const possuiTurmas = dados.turmas.some(turma => {
+        const codigoTurma = String(turma.codigoDisciplina || turma.disciplina_codigo || "").trim();
+        const codigoDisc = String(disciplina.codigo || "").trim();
+        return codigoTurma === codigoDisc;
+    });
 
         return `
             <tr>
