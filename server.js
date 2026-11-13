@@ -102,8 +102,21 @@ function criarTabelasESeed() {
                     ["Coordenação Acadêmica", "admin@unimatricula.br", senhaHash,]);
 
                 // Inserir professor padrão
-                db.run("INSERT INTO professores (nome, email, senha) VALUES (?, ?, ?)", 
-                    ["Ana Souza", "ana.souza@unimatricula.br", senhaHash]);
+                db.run(
+                    `INSERT INTO professores (nome, email, senha) VALUES 
+                    (?, ?, ?), 
+                    (?, ?, ?), 
+                    (?, ?, ?), 
+                    (?, ?, ?), 
+                    (?, ?, ?)`,
+                    [
+                        "Roberto Carlos", "roberto.carlos@unimatricula.br", senhaHash,
+                        "Ana Paula", "ana.paula@unimatricula.br", senhaHash,
+                        "Marcos Vinicius", "marcos.vinicius@unimatricula.br", senhaHash,
+                        "Juliana Souza", "juliana.souza@unimatricula.br", senhaHash,
+                        "Fernanda Lima", "fernanda.lima@unimatricula.br", senhaHash
+                    ]
+                );
                     
                 // Dados acadêmicos iniciais
                 db.run("INSERT OR IGNORE INTO disciplinas VALUES ('INF101', 'Programação Web', 60)");
@@ -124,29 +137,7 @@ function criarTabelasESeed() {
     });
 }
 
-// --- ROTAS DE AUTENTICAÇÃO ---
-
-// app.post('/api/auth/login', (req, res) => {
-//     const { email, senha } = req.body;
-
-//     db.get("SELECT * FROM usuarios WHERE email = ?", [email], async (err, usuario) => {
-//         if (err || !usuario) {
-//             return res.status(401).json({ erro: "E-mail ou senha inválidos." });
-//         }
-
-//         const senhaValida = await bcrypt.compare(senha, usuario.senha);
-//         if (!senhaValida) {
-//             return res.status(401).json({ erro: "E-mail ou senha inválidos." });
-//         }
-
-//         res.json({
-//             id: usuario.id,
-//             nome: usuario.nome,
-//             email: usuario.email,
-//             tipo: usuario.tipo
-//         });
-//     });
-// });
+// #region --- ROTAS DE AUTENTICAÇÃO ---
 
 app.post('/api/auth/login', (req, res) => {
     const { email, senha } = req.body;
@@ -180,23 +171,6 @@ app.post('/api/auth/login', (req, res) => {
     });
 });
 
-// app.post('/api/auth/registrar', async (req, res) => {
-//     const { nome, email, senha, tipo } = req.body;
-
-//     try {
-//         const senhaHash = await bcrypt.hash(senha, 10);
-//         db.run("INSERT INTO usuarios (nome, email, senha, tipo) VALUES (?, ?, ?, ?)",
-//             [nome, email, senhaHash, tipo || 'aluno'], function(err) {
-//                 if (err) {
-//                     return res.status(400).json({ erro: "Este e-mail já está cadastrado." });
-//                 }
-//                 res.json({ mensagem: "Usuário cadastrado com sucesso!", id: this.lastID });
-//             });
-//     } catch (e) {
-//         res.status(500).json({ erro: "Erro ao criptografar senha." });
-//     }
-// });
-
 app.post('/api/auth/registrar', async (req, res) => {
     const { nome, email, senha, tipo } = req.body; // 'tipo' define a tabela destino
 
@@ -222,8 +196,9 @@ app.post('/api/auth/registrar', async (req, res) => {
         res.status(500).json({ erro: "Erro ao criptografar senha." });
     }
 });
+// #endregion 
 
-// --- ROTAS ACADÊMICAS ---
+// #region --- ROTAS ACADÊMICAS ---
 
 app.get('/api/disciplinas', (req, res) => {
     db.all("SELECT * FROM disciplinas", [], (err, rows) => {
@@ -239,8 +214,9 @@ app.post('/api/disciplinas', (req, res) => {
         res.json({ mensagem: "Disciplina cadastrada com sucesso!" });
     });
 });
+// #endregion
 
-// Rota DELETE de disciplinas com exclusão em cascata segura
+// #region Rota DELETE de disciplinas com exclusão em cascata segura
 app.delete('/api/disciplinas/:codigo', (req, res) => {
     const { codigo } = req.params;
     
@@ -262,7 +238,9 @@ app.delete('/api/disciplinas/:codigo', (req, res) => {
         });
     });
 });
+// #endregion
 
+// #region TURMAS E MATRÍCULAS
 app.get('/api/turmas', (req, res) => {
     const query = `
         SELECT 
@@ -288,11 +266,27 @@ app.post('/api/turmas', (req, res) => {
     
     const { codigoDisciplina, idProfessor, dia, turno, horario, vagasTotais } = req.body;
     const horarioFinal = (horario && horario.trim() !== "") ? horario : "08:00-09:40";
+    const sqlConflitoHorarios =`
+        SELECT * FROM turmas 
+        WHERE idProfessor = ? AND dia = ? AND turno = ? AND horario = ?
+    `;
+    db.get(sqlConflitoHorarios,[idProfessor, dia, turno, horario], (err, turmaExistente) => {
+        if (err) {
+            console.error("Erro ao verificar conflito de horário:", err);
+            return res.status(500).json({ erro: "Erro interno no servidor." });
+        }
+
+        if (turmaExistente) {
+            return res.status(400).json({ 
+                erro: "Conflito de horário: Este professor já possui uma turma alocada neste dia, turno e horário." 
+            });
+        }
     db.run("INSERT INTO turmas (codigoDisciplina, idProfessor, dia, turno, horario, vagasTotais, vagasOcupadas) VALUES (?, ?, ?, ?, ?, ?, 0)",
         [codigoDisciplina, idProfessor, dia, turno, horarioFinal, vagasTotais], function(err) {
             if (err) return res.status(400).json({ erro: err.message });
             res.json({ mensagem: "Turma ofertada com sucesso!", id: this.lastID });
         });
+    });
 });
 
 app.delete('/api/turmas/:id', (req, res) => {
@@ -352,8 +346,8 @@ app.delete('/api/matriculas/:alunoId/:turmaId', (req, res) => {
     });
 });
 
-// ==========================================
-// ROTAS DE GESTÃO DE ALUNOS (ADMIN)
+// #endregion
+// #region ROTAS DE GESTÃO DE ALUNOS (ADMIN)
 // ==========================================
 
 app.post('/api/alunos', async (req, res) => {
@@ -391,10 +385,9 @@ app.get('/api/alunos', (req, res) => {
         res.json(rows);
     });
 });
+// #endregion
 
-
-// ==========================================
-// EXCLUIR ALUNO (ADMIN)
+// #region EXCLUIR ALUNO (ADMIN)
 // ==========================================
 
 app.delete('/api/alunos/:id', (req, res) => {
@@ -433,8 +426,9 @@ app.delete('/api/alunos/:id', (req, res) => {
     });
 });
 
-// ==========================================
-// ROTAS DE GESTÃO DE PROFESSORES (ADMIN)
+// #endregion
+
+// #region GESTÃO PROFESSORES
 // ==========================================
 
 app.post('/api/gestaoprofessores', async (req, res) => {
@@ -472,9 +466,9 @@ app.get('/api/gestaoprofessores', (req, res) => {
         res.json(rows);
     });
 });
+// #endregion
 
-// ==========================================
-// EXCLUIR PROFESSOR (ADMIN)
+// #region EXCLUIR PROFESSOR (ADMIN)
 // ==========================================
 
 app.delete('/api/gestaoprofessores/:id', (req, res) => {
@@ -512,8 +506,7 @@ app.delete('/api/gestaoprofessores/:id', (req, res) => {
         });
     });
 });
-
-
+//#endregion
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);

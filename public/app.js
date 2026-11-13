@@ -203,7 +203,7 @@ navegarPara(
         ? "professorDashboard"
         : "dashboard"
 );
-    // navegarPara("dashboard");
+    navegarPara("dashboard");
 }
 
 async function carregarDadosDoServidor() {
@@ -877,7 +877,6 @@ if (formTurma) {
 
         const codigoDisciplina = document.getElementById("disciplinaTurma").value;
         
-        // 🔄 Correção aplicada aqui: document.getElementById correto
         const idProfessor = Number(document.getElementById("professorTurma").value);
         
         const dia = Number(document.getElementById("diaTurma").value);
@@ -1280,8 +1279,7 @@ async function carregarSelectProfessores() {
         if (!resposta.ok) throw new Error("Erro ao buscar professores.");
 
         const professores = await resposta.json();
-
-        // 🔄 Garante que a resposta é um array válido antes de mapear
+        
         if (!Array.isArray(professores) || professores.length === 0) {
             selectProf.innerHTML = `<option value="">Nenhum professor cadastrado</option>`;
             return;

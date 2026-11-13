@@ -1490,31 +1490,24 @@
 
     <script>
         const campoTurnoTurma = document.getElementById('turnoTurma');
+        const inputHorario = document.getElementById('horarioTurma');
 
-        if (campoTurnoTurma) {
+        if (campoTurnoTurma && inputHorario){
 
             campoTurnoTurma.addEventListener('change', function() {
 
                 const turnoSelecionado = this.value;
 
-                const inputHorario = document.getElementById('horarioTurma');
-
-                if (inputHorario.value.trim() === "") {
-
-                    if (turnoSelecionado === "") {
-                        inputHorario.value = "08:00-11:40";
-
-                    } else if (turnoSelecionado === "2") {
-                        inputHorario.value = "13:30-17:10";
-
-                    } else if (turnoSelecionado === "3") {
-                        inputHorario.value = "19:00-22:30";
-                    }
-
+                if (turnoSelecionado === "1") {
+                    inputHorario.value = "08:00-11:40";
+                } else if (turnoSelecionado === "2") {
+                    inputHorario.value = "13:30-17:10";
+                } else if (turnoSelecionado === "3") {
+                    inputHorario.value = "19:00-22:30";
+                } else {
+                    inputHorario.value = "";
                 }
-
             });
-
         }
     </script>
 
